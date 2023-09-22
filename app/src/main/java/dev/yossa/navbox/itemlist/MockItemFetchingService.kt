@@ -1,6 +1,14 @@
 package dev.yossa.navbox.itemlist
 
-class MockItemFetchingService: ItemFetchingService {
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
+
+class MockItemFetchingService @Inject constructor(): ItemFetchingService {
   override suspend fun fetchItems(): List<Item> {
     return listOf(
       Item(id = "0", title = "Item 0", detail = null),
