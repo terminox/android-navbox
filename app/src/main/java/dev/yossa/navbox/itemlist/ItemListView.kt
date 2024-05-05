@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -18,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +29,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Composable
 fun ItemListView(viewModel: ItemListViewModel) {
-
   val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 
   DisposableEffect(lifecycleOwner) {
@@ -56,15 +59,25 @@ fun ItemListView(viewModel: ItemListViewModel) {
     }
   }
 
-  LazyColumn(modifier = Modifier
-    .fillMaxSize()
-    .background(Color.Red)) {
-    item {
-      Text("Hello")
+  when (val state = viewModel.viewState.collectAsState().value) {
+    is ItemListState.Loading -> {
+      Text("Loading")
     }
 
-    items(viewModel.items) {item ->
-      Text(text = item.title, modifier = Modifier.clickable { viewModel.select(item) })
+    is ItemListState.Success -> {
+      LazyColumn(
+        modifier = Modifier
+          .fillMaxSize()
+          .background(Color.Red)
+      ) {
+        items(state.items) {item ->
+          Text(text = item.title, modifier = Modifier.clickable { viewModel.select(item) })
+        }
+      }
+    }
+
+    is ItemListState.Error -> {
+      Text(state.message!!)
     }
   }
 }

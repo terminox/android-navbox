@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dev.yossa.navbox.itemlist.Item
 import dev.yossa.navbox.itemlist.ItemListViewDelegate
+import dev.yossa.navbox.itemlist.ItemListViewModel
+import dev.yossa.navbox.itemlist.MockItemFetchingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,6 +17,8 @@ class ItemCoordinatorViewModel: ViewModel() {
   private val _state = MutableStateFlow<ItemCoordinatorState>(ItemCoordinatorState.RootState)
   val state: StateFlow<ItemCoordinatorState> = _state
   var selectedItem: Item? = null
+
+  val itemListViewModel = ItemListViewModel(service = MockItemFetchingService())
 
   fun didSelectItem(item: Item) {
     selectedItem = item
